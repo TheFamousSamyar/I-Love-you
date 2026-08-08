@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>❤️ 2000 I Love You</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0b0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 700px;
+            padding: 10px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+            background: radial-gradient(ellipse at center, #1a1425 0%, #0b0a0f 80%);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(255, 30, 60, 0.12), 0 0 120px rgba(255, 20, 50, 0.04);
+            touch-action: none;
+            cursor: pointer;
+        }
+        .status-bar {
+            position: absolute;
+            top: 18px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 12px;
+            font-weight: 500;
+            pointer-events: none;
+            font-family: -apple-system, 'Segoe UI', sans-serif;
+        }
+        .status-bar .time { font-weight: 600; color: rgba(255,255,255,0.5); }
+        .status-bar .icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            font-size: 12px;
+        }
+        .status-bar .icons .battery {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .status-bar .icons .battery .level {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.55);
+        }
+        .status-bar .icons .battery .bar {
+            width: 20px;
+            height: 9px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            border-radius: 3px;
+            padding: 1px;
+            position: relative;
+        }
+        .status-bar .icons .battery .bar .fill {
+            height: 100%;
+            width: 81%;
+            background: rgba(255,255,255,0.45);
+            border-radius: 1px;
+        }
+        .status-bar .icons .battery .bar::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 2px;
+            width: 2px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 0 2px 2px 0;
+        }
+        .title-bar {
+            position: absolute;
+            top: 48px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.12);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            pointer-events: none;
+        }
+        .counter {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.12);
+            font-size: 12px;
+            font-weight: 400;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+        .counter span {
+            color: rgba(255, 60, 80, 0.4);
+            font-weight: 600;
+        }
+        #restartBtn {
+            position: absolute;
+            bottom: 70px;
+            right: 24px;
+            background: rgba(200, 30, 50, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(200, 30, 50, 0.3);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 22px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            z-index: 10;
+            touch-action: manipulation;
+            font-weight: 300;
+            padding: 0;
+            line-height: 1;
+        }
+        #restartBtn:hover {
+            background: rgba(200, 30, 50, 0.35);
+            transform: scale(1.05);
+        }
+        #restartBtn:active {
+            transform: scale(0.92);
+        }
+        @media (max-width: 520px) {
+            .status-bar { padding: 0 16px; font-size: 11px; top: 12px; }
+            .title-bar { top: 38px; font-size: 11px; }
+            .counter { font-size: 11px; bottom: 18px; }
+            .status-bar .icons .battery .bar { width: 17px; height: 8px; }
+            #restartBtn {
+                width: 46px;
+                height: 46px;
+                font-size: 18px;
+                bottom: 60px;
+                right: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <canvas id="heartCanvas" width="700" height="700"></canvas>
+    <div class="status-bar">
+        <span class="time" id="statusTime">9:41</span>
+        <div class="icons">
+            <span style="font-size:13px;">●●●●</span>
+            <div class="battery">
+                <span class="level">81%</span>
+                <div class="bar"><div class="fill"></div></div>
+            </div>
+        </div>
+    </div>
+    <div class="title-bar">UWP</div>
+    <div class="counter" id="counterDisplay">
+        <span id="countNumber">0</span> · i love you
+    </div>
+    <button id="restartBtn" aria-label="Restart">⟳</button>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 700, H = 700;
+        canvas.width = W; canvas.height = H;
+        const counterSpan = document.getElementById('countNumber');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // ─── ساعت استاتوس ──────────────────────────────────────────────────
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours(), m = now.getMinutes();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            document.getElementById('statusTime').textContent =
+                String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+        }
+        updateClock();
+        setInterval(updateClock, 30000);
+
+        // ─── پارامترهای قلب (وارونه) ─────────────────────────────────────
+        const SCALE = 13.5;
+        const CX = W/2, CY = H/2 + 4;
+
+        function heartX(t) { return SCALE * 16 * Math.pow(Math.sin(t), 3); }
+        function heartY(t) { return SCALE * (13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t)); }
+
+        // ─── تولید خطوط قلب ──────────────────────────────────────────────
+        const OUTLINE_COUNT = 120; // بیشتر برای فاصله‌ی کمتر
+        let heartOutline = [];
+        function generateHeartOutline() {
+            heartOutline = [];
+            for (let i = 0; i < OUTLINE_COUNT; i++) {
+                const t = (i / OUTLINE_COUNT) * 2 * Math.PI;
+                heartOutline.push({
+                    x: CX + heartX(t),
+                    y: CY - heartY(t)
+                });
+            }
+        }
+        generateHeartOutline();
+
+        // ─── گلو (دم) به شکل منحنی ──────────────────────────────────────
+        let maxY = -Infinity;
+        for (const p of heartOutline) if (p.y > maxY) maxY = p.y;
+
+        // پیدا کردن دو نقطه‌ی پایین‌ترین لبه‌های قلب
+        let leftBottom = null, rightBottom = null;
+        let minDistLeft = Infinity, minDistRight = Infinity;
+        for (const p of heartOutline) {
+            if (p.y > maxY - 8) {
+                const distFromCenter = p.x - CX;
+                if (distFromCenter < 0 && Math.abs(distFromCenter) < Math.abs(minDistLeft)) {
+                    minDistLeft = distFromCenter;
+                    leftBottom = p;
+                } else if (distFromCenter > 0 && distFromCenter < Math.abs(minDistRight)) {
+                    minDistRight = distFromCenter;
+                    rightBottom = p;
+                }
+            }
+        }
+
+        // اگر پیدا نشد، از نقاط انتهایی استفاده کن
+        if (!leftBottom) {
+            let minX = Infinity;
+            for (const p of heartOutline) {
+                if (p.y > maxY - 6 && p.x < minX) {
+                    minX = p.x;
+                    leftBottom = p;
+                }
+            }
+        }
+        if (!rightBottom) {
+            let maxX = -Infinity;
+            for (const p of heartOutline) {
+                if (p.y > maxY - 6 && p.x > maxX) {
+                    maxX = p.x;
+                    rightBottom = p;
+                }
+            }
+        }
+
+        const GLUE_HEIGHT = 40;
+        const GLUE_BOTTOM_WIDTH = 24;
+        const gluePoints = [];
+        if (leftBottom && rightBottom) {
+            const midX = (leftBottom.x + rightBottom.x) / 2;
+            const bottomY = maxY + GLUE_HEIGHT;
+            // منحنی نرم برای گلو
+            const steps = 20;
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                // منحنی درجه 3 برای شکل ظریف
+                const curve = t * t * (3 - 2 * t); // smoothstep
+                const x = leftBottom.x + (rightBottom.x - leftBottom.x) * t;
+                const y = maxY + curve * GLUE_HEIGHT;
+                // کمی باریک‌تر شدن به سمت پایین
+                const widthFactor = 1 - 0.35 * curve;
+                const offset = (rightBottom.x - leftBottom.x) * 0.5 * widthFactor;
+                const centerX = (leftBottom.x + rightBottom.x) / 2;
+                const px = centerX + (x - centerX) * widthFactor;
+                gluePoints.push({ x: px, y: y });
+            }
+            // اضافه کردن نقاط پایین برای بستن شکل
+            const bottomWidth = GLUE_BOTTOM_WIDTH;
+            const bottomLeft = { x: midX - bottomWidth/2, y: bottomY };
+            const bottomRight = { x: midX + bottomWidth/2, y: bottomY };
+            // نقاط پایین گلو
+            gluePoints.push(bottomRight);
+            gluePoints.push(bottomLeft);
+        }
+
+        // ─── point-in-polygon ──────────────────────────────────────────────
+        function pointInPolygon(px, py, polygon) {
+            let inside = false;
+            const n = polygon.length;
+            for (let i = 0, j = n-1; i < n; j = i++) {
+                const xi = polygon[i].x, yi = polygon[i].y;
+                const xj = polygon[j].x, yj = polygon[j].y;
+                const intersect = ((yi > py) !== (yj > py)) &&
+                    (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        // ─── تولید نقاط داخل ──────────────────────────────────────────────
+        let insidePoints = [];
+        function generateInsidePoints() {
+            const INSIDE_TARGET = 2000;
+            const candidates = [];
+
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxYall = -Infinity;
+            const allOutlines = heartOutline.concat(gluePoints);
+            for (const p of allOutlines) {
+                if (p.x < minX) minX = p.x;
+                if (p.x > maxX) maxX = p.x;
+                if (p.y < minY) minY = p.y;
+                if (p.y > maxYall) maxYall = p.y;
+            }
+            const margin = 4;
+            minX -= margin; maxX += margin;
+            minY -= margin; maxYall += margin;
+
+            const gridStep = 3.8; // تراکم بالا برای ۲۰۰۰ نقطه
+            const cols = Math.floor((maxX - minX) / gridStep);
+            const rows = Math.floor((maxYall - minY) / gridStep);
+            const gridPoints = [];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const px = minX + (c + 0.5) * gridStep + (Math.random() - 0.5) * gridStep * 0.3;
+                    const py = minY + (r + 0.5) * gridStep + (Math.random() - 0.5) * gridStep * 0.3;
+                    gridPoints.push({ x: px, y: py });
+                }
+            }
+            for (let i = gridPoints.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gridPoints[i], gridPoints[j]] = [gridPoints[j], gridPoints[i]];
+            }
+
+            for (const p of gridPoints) {
+                if (candidates.length >= INSIDE_TARGET * 1.3) break;
+                if (pointInPolygon(p.x, p.y, heartOutline) || 
+                    (gluePoints.length > 0 && pointInPolygon(p.x, p.y, gluePoints))) {
+                    candidates.push(p);
+                }
+            }
+            let attempts = 0;
+            while (candidates.length < INSIDE_TARGET && attempts < 150000) {
+                attempts++;
+                const px = minX + Math.random() * (maxX - minX);
+                const py = minY + Math.random() * (maxYall - minY);
+                if (pointInPolygon(px, py, heartOutline) || 
+                    (gluePoints.length > 0 && pointInPolygon(px, py, gluePoints))) {
+                    candidates.push({ x: px, y: py });
+                }
+            }
+            insidePoints = candidates.slice(0, INSIDE_TARGET);
+            for (let i = insidePoints.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [insidePoints[i], insidePoints[j]] = [insidePoints[j], insidePoints[i]];
+            }
+        }
+        generateInsidePoints();
+
+        // ─── اندازه فونت پویا ──────────────────────────────────────────────
+        function getFontSize() {
+            const base = Math.min(W, H) / 65;
+            return Math.max(6, Math.min(11, base));
+        }
+
+        const TEXT = 'i love you';
+
+        // ─── رنگ قرمز تیره یکدست با سایه ──────────────────────────────────
+        const RED_COLOR = '#8B0000'; // قرمز تیره
+        const SHADOW_COLOR = 'rgba(180, 0, 0, 0.3)';
+
+        function drawTextAt(x, y, alpha = 0.85) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.font = `bold ${getFontSize()}px -apple-system, "Segoe UI", "Arial", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            // سایه قرمز
+            ctx.shadowColor = SHADOW_COLOR;
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = RED_COLOR;
+            ctx.fillText(TEXT, x, y);
+            ctx.restore();
+        }
+
+        // ─── وضعیت انیمیشن ──────────────────────────────────────────────────
+        let outlineIndex = 0;
+        let insideIndex = 0;
+        let phase = 'outline';
+        let lastTimestamp = 0;
+        let animationFrameId = null;
+        let outlineTimer = 0;
+        let insideTimer = 0;
+        let batchCount = 0;
+
+        // تنظیمات انیمیشن نرم
+        const OUTLINE_INTERVAL = 60;    // آرام برای دور
+        const BATCH_SIZE = 3;           // چند تا هم‌زمان
+        const INSIDE_BATCH_SIZE = 5;    // داخل با دسته‌های بزرگ‌تر اما نرم
+
+        // ─── رسم سایه ──────────────────────────────────────────────────────
+        function drawSilhouette() {
+            ctx.save();
+            ctx.globalAlpha = 0.02;
+            ctx.beginPath();
+            for (let i = 0; i < heartOutline.length; i++) {
+                const p = heartOutline[i];
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = '#8B0000';
+            ctx.fill();
+            if (gluePoints.length > 0) {
+                ctx.beginPath();
+                for (let i = 0; i < gluePoints.length; i++) {
+                    const p = gluePoints[i];
+                    if (i === 0) ctx.moveTo(p.x, p.y);
+                    else ctx.lineTo(p.x, p.y);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // ─── رندر ──────────────────────────────────────────────────────────
+        function render() {
+            ctx.clearRect(0, 0, W, H);
+            drawSilhouette();
+
+            // ۱. رسم دور قلب (با تراکم بیشتر)
+            for (let i = 0; i < outlineIndex && i < heartOutline.length; i++) {
+                const p = heartOutline[i];
+                drawTextAt(p.x, p.y, 0.9);
+            }
+
+            // ۲. رسم دور گلو
+            if (gluePoints.length > 0) {
+                const glueStart = heartOutline.length;
+                for (let i = 0; i < outlineIndex - glueStart && i < gluePoints.length; i++) {
+                    if (outlineIndex > glueStart) {
+                        const p = gluePoints[i];
+                        drawTextAt(p.x, p.y, 0.9);
+                    }
+                }
+            }
+
+            // ۳. رسم داخل قلب (با دسته‌های بزرگ‌تر برای نرمی)
+            for (let i = 0; i < insideIndex && i < insidePoints.length; i++) {
+                const p = insidePoints[i];
+                // فقط نقاطی که داخل قلب یا گلو هستند
+                if (pointInPolygon(p.x, p.y, heartOutline) || 
+                    (gluePoints.length > 0 && pointInPolygon(p.x, p.y, gluePoints))) {
+                    drawTextAt(p.x, p.y, 0.75);
+                }
+            }
+
+            // شمارنده
+            const total = outlineIndex + insideIndex;
+            counterSpan.textContent = Math.min(total, 2000);
+        }
+
+        // ─── تابع easing برای نرم‌تر شدن ──────────────────────────────────
+        function easeInOut(t) {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+
+        // ─── حلقه انیمیشن ──────────────────────────────────────────────────
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const delta = Math.min(timestamp - lastTimestamp, 50); // محدود کردن دلتا
+            lastTimestamp = timestamp;
+
+            const totalOutline = heartOutline.length + (gluePoints.length > 0 ? gluePoints.length : 0);
+
+            if (phase === 'outline') {
+                outlineTimer += delta;
+                while (outlineTimer >= OUTLINE_INTERVAL) {
+                    outlineTimer -= OUTLINE_INTERVAL;
+                    // اضافه کردن چند تا هم‌زمان
+                    for (let i = 0; i < BATCH_SIZE && outlineIndex < totalOutline; i++) {
+                        outlineIndex++;
+                    }
+                }
+                if (outlineIndex >= totalOutline) {
+                    phase = 'inside';
+                    outlineTimer = 0;
+                    insideTimer = -200; // مکث کوتاه
+                }
+            } else if (phase === 'inside') {
+                insideTimer += delta;
+                // استفاده از easing برای نرم‌تر شدن
+                const progress = Math.min(insideTimer / 6000, 1); // 6 ثانیه برای پر شدن کامل
+                const eased = easeInOut(progress);
+                const targetIndex = Math.floor(eased * insidePoints.length);
+                
+                // اضافه کردن چند تا هم‌زمان ولی با کنترل
+                if (insideIndex < targetIndex) {
+                    const step = Math.max(1, Math.floor((targetIndex - insideIndex) / 10) + 1);
+                    insideIndex = Math.min(insideIndex + step, targetIndex);
+                }
+                if (insideIndex >= insidePoints.length) {
+                    phase = 'done';
+                }
+            }
+
+            render();
+
+            // جلوه‌ی نبض در حالت done
+            if (phase === 'done') {
+                const pulse = 0.6 + 0.4 * Math.sin(timestamp / 1100);
+                document.querySelector('.counter').style.opacity = 0.25 + 0.2 * pulse;
+            } else {
+                document.querySelector('.counter').style.opacity = 1;
+            }
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // ─── تابع ری‌استارت ──────────────────────────────────────────────
+        function resetAnimation() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            outlineIndex = 0;
+            insideIndex = 0;
+            phase = 'outline';
+            outlineTimer = 0;
+            insideTimer = 0;
+            lastTimestamp = 0;
+            counterSpan.textContent = '0';
+            document.querySelector('.counter').style.opacity = 1;
+            
+            generateHeartOutline();
+            generateInsidePoints();
+            
+            ctx.clearRect(0, 0, W, H);
+            drawSilhouette();
+            render();
+            
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // ─── شروع اولیه ──────────────────────────────────────────────────
+        ctx.clearRect(0, 0, W, H);
+        drawSilhouette();
+        counterSpan.textContent = '0';
+        setTimeout(() => {
+            animationFrameId = requestAnimationFrame(animate);
+        }, 300);
+
+        // ─── رویدادها ──────────────────────────────────────────────────────
+        canvas.addEventListener('click', resetAnimation);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            resetAnimation();
+        });
+        restartBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetAnimation();
+        });
+        restartBtn.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            resetAnimation();
+        });
+
+        console.log('❤️  2000 I Love You — قرمز تیره، سایه، انیمیشن نرم');
+    })();
+</script>
+
+<style>
+    .developer-credit {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 10px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.38);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        pointer-events: none;
+        z-index: 20;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
+</style>
+<div class="developer-credit">developed by samyar</div>
+
+</body>
+</html>
